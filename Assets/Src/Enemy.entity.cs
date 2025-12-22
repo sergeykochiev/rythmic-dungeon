@@ -1,0 +1,163 @@
+using Unity.VisualScripting;
+using UnityEngine;
+
+public class Enemy : AliveBehaviour
+{
+    private Color AggressiveColor = Color.red;
+    private Color NormalColor = Color.darkRed;
+    private Color DeadColor = Color.white;
+    private Color DirectionColor = Color.white;
+    public Player playerInstance;
+    private float aggressiveChance = 0;
+    private int maxSpeedWhenAggressive = 1;
+    private int speedWhenPassive = 1;
+    public bool isAggressive;
+    private int difficultyLevel = 0;
+    private bool isNextMoveReady = false;
+    private float moveReadyWindowSeconds;
+
+    public override Color GetAliveColor()
+    {
+        return NormalColor;
+    }
+
+    public override Color GetDeadColor()
+    {
+        return DeadColor;
+    }
+
+    public override Color GetDirectionColor()
+    {
+        return DirectionColor;
+    }
+
+    public override void AliveOnStart()
+    {
+        tag = "Enemy";
+        moveReadyWindowSeconds = rythmic.rythmIntervalSeconds / 2;
+        BeBorn();
+    }
+
+    public void SetDifficultyLevel(int difficultyLevel)
+    {
+        this.difficultyLevel = difficultyLevel;
+        if (difficultyLevel > Constants.MaxDifficultyLevel) difficultyLevel = Constants.MaxDifficultyLevel;
+        aggressiveChance = (float)difficultyLevel / 10;
+        speedWhenPassive = difficultyLevel / 6 + 1;
+        maxSpeedWhenAggressive = difficultyLevel / 3 + 1;
+    }
+
+    public void SetPlayerInstance(Player playerInstance)
+    {
+        this.playerInstance = playerInstance;
+    }
+    
+    private Vector3 GetPlayerBasedDirection()
+    {
+        Vector2 pos = new(0, 0);
+        float diffX = playerInstance.transform.position.x - transform.position.x;
+        float diffY = playerInstance.transform.position.y - transform.position.y;
+        if (Mathf.Abs(diffX) > Mathf.Abs(diffY))
+        {
+            pos.x = diffX > 0 ? 1 : -1;
+        } else
+        {
+            pos.y = diffY > 0 ? 1 : -1;
+        }
+        return pos;
+    }
+
+    private Vector2 GetRandomDirection()
+    {
+        Vector2 pos = new(0, 0)
+        {
+            x = Random.Range(-1, 2),
+            y = Random.Range(-1, 2),
+        };
+        return pos;
+    }
+
+    private void UpdateAggressive()
+    {
+        isAggressive = Random.Range(0f, 1f) < aggressiveChance;
+    }
+
+    private int GetSpeedWhenAggressive()
+    {
+        return Random.Range(speedWhenPassive + 1, maxSpeedWhenAggressive + 1);
+    }
+
+    private MovableTrait.MoveProperties GetNewMove()
+    {
+        if (isAggressive)
+        {
+            return new(GetPlayerBasedDirection(), GetSpeedWhenAggressive());
+        }
+        return new(GetRandomDirection(), speedWhenPassive);
+    }
+
+    private void ChangeColor()
+    {
+        if (isAggressive)
+        {
+            spriteRenderer.color = AggressiveColor;
+            return;
+        }
+        spriteRenderer.color = NormalColor;
+    }
+
+    private void InitMove()
+    {
+        isNextMoveReady = false;
+        movable.InitMove();
+        movable.ResetQueuedMove();
+    }
+
+    private void Evolve()
+    {
+        shakable.InitShake(50);
+        SetDifficultyLevel(difficultyLevel + 1);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Enemy"))
+        {
+            if (!collision.gameObject.GetComponent<Enemy>().IsDestroyed())
+            {
+                Die();
+                Destroy(gameObject);
+            } else
+            {
+                Evolve();
+            }
+        }
+    }
+
+    private void ReadyNextMove()
+    {
+        UpdateAggressive();
+        MovableTrait.MoveProperties move = GetNewMove();
+        movable.QueueMove(move);
+        directionInstance.RotateDirection(move.direction);
+        directionInstance.HideSprite();
+        ChangeColor();
+        isNextMoveReady = true;
+    }
+
+    private void FixedUpdate()
+    {
+        if (IsDead()) return;
+        if (rythmic.TimePassed() + moveReadyWindowSeconds > rythmic.rythmIntervalSeconds && !isNextMoveReady)
+        {
+            ReadyNextMove();
+        }
+        if (!rythmic.FixedUpdate()) return;
+        InitMove();
+        directionInstance.ShowSprite();
+    }
+
+    public override void AliveOnUpdate()
+    {
+    }
+}
