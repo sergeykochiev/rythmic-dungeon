@@ -13,6 +13,7 @@ abstract public class CyclicBehaviour : MonoBehaviour
 
     public void CyclicStart()
     {
+        rythm.ResetCycles();
         rythm.RythmStart();
     }
 
@@ -20,6 +21,8 @@ abstract public class CyclicBehaviour : MonoBehaviour
     {
         rythm.RythmStop();
     }
+
+    // abstract public bool CyclicShouldStop();
 
     public int CyclesLeftToWait()
     {
@@ -37,6 +40,11 @@ abstract public class CyclicBehaviour : MonoBehaviour
         if (resetCycles) rythm.ResetCycles();
     }
 
+    public int CyclicCyclesPassed()
+    {
+        return rythm.CyclesPassed();
+    }
+
     abstract public void CyclicOnStart();
 
     abstract public void CyclicOnCycle();
@@ -48,6 +56,11 @@ abstract public class CyclicBehaviour : MonoBehaviour
     private void FixedUpdate()
     {
         if (!rythm.FixedUpdate()) return;
+        // if (CyclicShouldStop())
+        // {
+        //     CyclicStop();
+        //     return;
+        // }
         var (shouldCycleNow, shouldResetCycle) = CyclicShouldCycleNow();
         if (shouldCycleNow)
         {

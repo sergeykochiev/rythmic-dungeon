@@ -14,7 +14,7 @@ public class MainCamera : MonoBehaviour
         shake.InitShake(shakePower);
     }
 
-    void Update()
+    private void Update()
     {
         shake.Update();
     }

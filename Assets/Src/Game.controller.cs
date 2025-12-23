@@ -2,11 +2,13 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    public BeamPowerController beamPowerInstance;
     public EnemySpawner enemySpawnerInstance;
     public Player playerInstance;
     public MainCamera mainCameraInstance;
     private RythmicTrait rythm;
-    private int difficultyLevel = 0;
+    public int initialDifficulty = 1;
+    public int difficultyLevel = 0;
     private bool isRunning = false;
 
     private void Start()
@@ -15,7 +17,7 @@ public class GameController : MonoBehaviour
         transform.localScale.Set(
             Constants.MaxFieldSize,
             Constants.MaxFieldSize,
-            Constants.MaxFieldSize
+            0
         );
         enemySpawnerInstance.SetPositionConstrains(
             Constants.MinFieldPos,
@@ -28,7 +30,9 @@ public class GameController : MonoBehaviour
     {
         isRunning = true;
         rythm.RythmStart();
-        enemySpawnerInstance.StartSpawning();
+        enemySpawnerInstance.CyclicStart();
+        playerInstance.SetPower(beamPowerInstance);
+        difficultyLevel = initialDifficulty;
     }
 
     public bool IsRunning()
@@ -57,7 +61,7 @@ public class GameController : MonoBehaviour
     public void EndLose()
     {
         Stop(true);
-        mainCameraInstance.Shake(Constants.GameEndCameraShake);
+        mainCameraInstance.Shake(50);
         // TODO: display death message and go back to main menu
     }
 

@@ -1,3 +1,4 @@
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 public class EnemySpawner : Spawner<Enemy>
@@ -6,6 +7,11 @@ public class EnemySpawner : Spawner<Enemy>
     private int posMax;
     private int difficultyLevel;
     public Player playerInstance;
+
+    // public override bool CyclicShouldStop()
+    // {
+    //     return false;
+    // }
 
     private Enemy[] GetEnemies()
     {
@@ -35,13 +41,12 @@ public class EnemySpawner : Spawner<Enemy>
     public void UpdateDifficultyLevel(int difficultyLevel)
     {
         this.difficultyLevel = difficultyLevel;
-        UpdateEnemySpawnRate();
     }
 
-    private void UpdateEnemySpawnRate()
-    {
-        CyclicUpdateInterval((int)Mathf.Ceil((Constants.MaxDifficultyLevel + 1 - difficultyLevel) / 3));
-    }
+    // private void UpdateEnemySpawnRate()
+    // {
+    //     CyclicUpdateInterval(7 - (int)Mathf.Ceil(difficultyLevel * 7 / Constants.MaxDifficultyLevel));
+    // }
 
     public void SetPositionConstrains(int min, int max)
     {
@@ -49,7 +54,7 @@ public class EnemySpawner : Spawner<Enemy>
         posMax = max;
     }
 
-    public override Vector3 GetInstatiatePosition()
+    public override Vector3 GetInstantiatePosition()
     {
         return (Vector3)new Vector2(
             Random.Range(posMin, posMax + 1),
@@ -64,6 +69,24 @@ public class EnemySpawner : Spawner<Enemy>
 
     public override void CyclicOnStart()
     {
+        CyclicUpdateInterval(2);
+    }
+
+    private bool CoordinateWithinDistance(float coordinate, float point, float distance)
+    {
+        return coordinate + distance > point || coordinate - distance < point;
+    }
+
+    private bool PositionWithinRadius(Vector2 position, Vector2 point, float radius)
+    {
+        return CoordinateWithinDistance(position.x, point.x, radius) &&
+            CoordinateWithinDistance(position.y, point.y, radius);
+    }
+
+    public override bool ShouldSpawn(Vector2 position, Quaternion rotation)
+    {
+        Vector2 playerPos = playerInstance.transform.position;
+        return PositionWithinRadius(playerPos, position, 2);
     }
 
     public override void InitInstance(Enemy instance)

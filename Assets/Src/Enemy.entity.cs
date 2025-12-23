@@ -5,7 +5,7 @@ public class Enemy : AliveBehaviour
 {
     private Color AggressiveColor = Color.red;
     private Color NormalColor = Color.darkRed;
-    private Color DeadColor = Color.white;
+    private Color DeadColor = Color.darkMagenta;
     private Color DirectionColor = Color.white;
     public Player playerInstance;
     private float aggressiveChance = 0;
@@ -121,16 +121,20 @@ public class Enemy : AliveBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (IsDead()) return;
         if (collision.collider.CompareTag("Enemy"))
         {
-            if (!collision.gameObject.GetComponent<Enemy>().IsDestroyed())
+            if (!collision.gameObject.GetComponent<Enemy>().IsDead())
             {
                 Die();
-                Destroy(gameObject);
             } else
             {
                 Evolve();
             }
+        }
+        if (collision.collider.CompareTag("Power"))
+        {
+            Die();
         }
     }
 
@@ -140,7 +144,6 @@ public class Enemy : AliveBehaviour
         MovableTrait.MoveProperties move = GetNewMove();
         movable.QueueMove(move);
         directionInstance.RotateDirection(move.direction);
-        directionInstance.HideSprite();
         ChangeColor();
         isNextMoveReady = true;
     }
@@ -154,7 +157,7 @@ public class Enemy : AliveBehaviour
         }
         if (!rythmic.FixedUpdate()) return;
         InitMove();
-        directionInstance.ShowSprite();
+        directionInstance.SetNoDirection();
     }
 
     public override void AliveOnUpdate()

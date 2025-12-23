@@ -4,22 +4,14 @@ abstract public class Spawner<T> : CyclicBehaviour where T : Component
 {
     public T prefub;
     abstract public void InitInstance(T instance);
-    abstract public Vector3 GetInstatiatePosition();
+    abstract public Vector3 GetInstantiatePosition();
     abstract public Quaternion GetInstatiateRotation();
-
-    public void SetSpawnRate(int spawnrate)
-    {
-        CyclicUpdateInterval(spawnrate);
-    }
-    public void StartSpawning()
-    {
-        CyclicStart();
-    }
+    abstract public bool ShouldSpawn(Vector2 position, Quaternion rotation);
     public override void CyclicOnCycle()
     {
         T instance = Instantiate(
             prefub,
-            GetInstatiatePosition(),
+            GetInstantiatePosition(),
             GetInstatiateRotation()
         );
         InitInstance(instance);

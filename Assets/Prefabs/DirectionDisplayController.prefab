@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2368838873312862557}
   - component: {fileID: 4190954739882791432}
   m_Layer: 0
-  m_Name: Direction
+  m_Name: DirectionDisplayController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,12 +80,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 7482667652216324306, guid: eba5ef237065a9246865717e85653b9e, type: 3}
+  m_Sprite: {fileID: 3060230111996817670, guid: 7b31cb2af65c9b843b1e00c09043aac1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.56, y: 2.56}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -103,4 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6a474b0fb080c348bfccd1b84070db2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Direction
-  arrowRenderer: {fileID: 2368838873312862557}
+  spriteRenderer: {fileID: 2368838873312862557}
+  discreteDirection: {fileID: -3711374324638178733, guid: 6b57d237232f1a947979a3fa9d5d6cf0, type: 3}
+  diagonalDirection: {fileID: -3711374324638178733, guid: 6b57d237232f1a947979a3fa9d5d6cf0, type: 3}
+  noDirection: {fileID: 3060230111996817670, guid: 7b31cb2af65c9b843b1e00c09043aac1, type: 3}

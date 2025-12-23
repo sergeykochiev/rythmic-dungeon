@@ -1,8 +1,9 @@
 using UnityEngine;
 
-public class MovableTrait
+public class MovableTrait : AnimatedTrait
 {
     public const float DefaultCellSize = 1f;
+    public const float DefaultSpeed = 0.01f;
     public class MoveProperties
     {
         public int distance;
@@ -15,17 +16,16 @@ public class MovableTrait
         }
     }
     private readonly Transform transform;
-    private readonly float speedMultiplier = 0.01f;
     private MoveProperties queuedMove;
     private MoveProperties currentMove;
     private Vector3 targetPosition;
-    private bool isMoving = false;
     private readonly float cellSize;
 
-    public MovableTrait(Transform transform, float cellSize = DefaultCellSize)
+    public MovableTrait(Transform transform, float cellSize = DefaultCellSize, float speed = DefaultSpeed)
     {
         this.cellSize = cellSize;
         this.transform = transform;
+        SetAnimationSpeed(speed);
     }
 
     public void QueueMove(MoveProperties moveProperties)
@@ -50,43 +50,30 @@ public class MovableTrait
             queuedMove.direction, queuedMove.distance
         );
         targetPosition = GetTargetPosition();
-        isMoving = true;
+        AnimationStart();
     }
 
-    public bool IsMoving()
+    public override void OnAnimationStart()
     {
-        return isMoving;
     }
 
-    private bool IsAchievedPosition()
+    public override bool IsAnimationEndConditionMet()
     {
         return Vector3.Distance(transform.position, targetPosition) < 0.001f;
     }
 
-    private void EndMove()
+    public override void OnAnimationEnd()
     {
-        transform.position = targetPosition;
-        isMoving = false;
         currentMove = null;
+        transform.position = targetPosition;
     }
 
-    private void AdvanceMove()
+    public override void OnAnimationStep(float animationSpeed)
     {
         transform.position = Vector3.MoveTowards(
             transform.position,
             targetPosition,
-            cellSize * speedMultiplier
+            cellSize * animationSpeed
         );
-    }
-
-    public void Update()
-    {
-        if (isMoving == false) return;
-        if (IsAchievedPosition())
-        {
-            EndMove();
-            return;
-        }
-        AdvanceMove();
     }
 }

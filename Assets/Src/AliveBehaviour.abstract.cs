@@ -1,10 +1,9 @@
 using UnityEngine;
-using UnityEngine.Splines;
 
 [RequireComponent(typeof(SpriteRenderer))]
 abstract public class AliveBehaviour : MonoBehaviour
 {
-    public Direction directionInstance;
+    public DirectionDisplayController directionInstance;
     public MovableTrait movable;
     public ShakableTrait shakable;
     public RythmicTrait rythmic;
@@ -15,7 +14,7 @@ abstract public class AliveBehaviour : MonoBehaviour
     { 
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.color = GetAliveColor();
-        directionInstance.arrowRenderer.color = GetDirectionColor();
+        directionInstance.SetColor(GetDirectionColor());
         movable = new MovableTrait(transform);
         shakable = new ShakableTrait(transform);
         rythmic = new RythmicTrait();
@@ -30,7 +29,7 @@ abstract public class AliveBehaviour : MonoBehaviour
     {
         isDead = false;
         spriteRenderer.color = GetAliveColor();
-        directionInstance.HideSprite();
+        directionInstance.ShowSprite();
         rythmic.RythmStart();
     }
 
@@ -45,6 +44,7 @@ abstract public class AliveBehaviour : MonoBehaviour
         spriteRenderer.color = GetDeadColor();
         directionInstance.HideSprite();
         rythmic.RythmStop();
+        shakable.InitShake(50);
     }
 
     private void Update()
