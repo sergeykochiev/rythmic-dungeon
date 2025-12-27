@@ -8,15 +8,15 @@ using UnityEngine;
 // add sounds
 // add cool textures
 // automatically update camera and field from constants
-// FIX enemies still go off the board
-// FIX shaking
+// FIX enemies still go off the field
+// FIX shaking is not working
 // FIX min and max are not counted properly for %2==1 field sizes
 
 public class Player : AliveBehaviour 
 {
     private PowerController power;
-    private Color NormalColor = Color.white;
-    private Color DeadColor = Color.black;
+    private Color NormalColor = new Color(0.8f, 0.9f, 1f);
+    private Color DeadColor = new Color(0.1f, 0.1f, 0.2f);
 
     private bool isPowerUseQueued = false;
     // private readonly float inputWindowSeconds = 0.2f;
@@ -65,22 +65,26 @@ public class Player : AliveBehaviour
         }
         if (Input.GetKeyDown(KeyCode.W))
         {
-            if (transform.position.y > Constants.MaxFieldPos - 1) return;
+            Vector3 targetPos = transform.position + Vector3.up;
+            if (targetPos.y > Constants.MaxFieldPos) return;
             QueueMove(Vector2.up);
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
-            if (transform.position.y < Constants.MinFieldPos + 1) return;
+            Vector3 targetPos = transform.position + Vector3.down;
+            if (targetPos.y < Constants.MinFieldPos) return;
             QueueMove(Vector2.down);
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
-            if (transform.position.x < Constants.MinFieldPos - 1) return;
+            Vector3 targetPos = transform.position + Vector3.left;
+            if (targetPos.x < Constants.MinFieldPos) return;
             QueueMove(Vector2.left);
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
-            if (transform.position.x > Constants.MaxFieldPos + 1) return;
+            Vector3 targetPos = transform.position + Vector3.right;
+            if (targetPos.x > Constants.MaxFieldPos) return;
             QueueMove(Vector2.right);
         }
     }

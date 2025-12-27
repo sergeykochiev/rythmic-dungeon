@@ -49,9 +49,9 @@ abstract public class AliveBehaviour : MonoBehaviour
 
     private void Update()
     {
-        if (isDead) return;
         movable.Update();
         shakable.Update();
+        if (isDead) return;
         AliveOnUpdate();
     }
 

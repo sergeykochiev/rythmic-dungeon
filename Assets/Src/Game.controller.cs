@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class GameController : MonoBehaviour
 {
@@ -24,6 +25,12 @@ public class GameController : MonoBehaviour
             Constants.MaxFieldPos
         );
         rythm = new RythmicTrait();
+        
+        MainMenuController mainMenu = FindFirstObjectByType<MainMenuController>();
+        if (mainMenu == null)
+        {
+            Run();
+        }
     }
 
     public void Run()
@@ -61,9 +68,35 @@ public class GameController : MonoBehaviour
     public void EndLose()
     {
         Stop(true);
-        mainCameraInstance.Shake(50);
-        // TODO: display death message and go back to main menu
+        mainCameraInstance.Shake(Constants.GameEndCameraShake);
+        StartCoroutine(DeathAnimation());
     }
+    
+    private System.Collections.IEnumerator DeathAnimation()
+    {
+        yield return new WaitForSeconds(1.5f);
+        
+        Camera mainCamera = Camera.main;
+        if (mainCamera != null)
+        {
+            Color originalColor = mainCamera.backgroundColor;
+            mainCamera.backgroundColor = Color.red;
+            yield return new WaitForSeconds(0.2f);
+            mainCamera.backgroundColor = originalColor;
+            yield return new WaitForSeconds(0.1f);
+            mainCamera.backgroundColor = Color.red;
+            yield return new WaitForSeconds(0.2f);
+            mainCamera.backgroundColor = originalColor;
+        }
+        
+        MainMenuController mainMenu = FindFirstObjectByType<MainMenuController>();
+        if (mainMenu != null)
+        {
+            mainMenu.ShowGameOver();
+        }
+    }
+    
+
 
     void FixedUpdate()
     {  

@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class Enemy : AliveBehaviour
 {
-    private Color AggressiveColor = Color.red;
-    private Color NormalColor = Color.darkRed;
-    private Color DeadColor = Color.darkMagenta;
-    private Color DirectionColor = Color.white;
+    private Color AggressiveColor = new Color(1f, 0.2f, 0.2f); // Bright red
+    private Color NormalColor = new Color(0.8f, 0.1f, 0.1f);    // Dark red
+    private Color DeadColor = new Color(0.5f, 0f, 0.5f);        // Purple
+    private Color DirectionColor = Color.cyan;                  // Cyan for visibility
     public Player playerInstance;
     private float aggressiveChance = 0;
     private int maxSpeedWhenAggressive = 1;
@@ -91,9 +91,35 @@ public class Enemy : AliveBehaviour
     {
         if (isAggressive)
         {
-            return new(GetPlayerBasedDirection(), GetSpeedWhenAggressive());
+            Vector3 direction = GetPlayerBasedDirection();
+            Vector3 targetPos = transform.position + direction;
+            if (IsWithinBounds(targetPos))
+            {
+                return new(direction, GetSpeedWhenAggressive());
+            }
         }
-        return new(GetRandomDirection(), speedWhenPassive);
+        
+        // Try random directions until we find one within bounds
+        for (int i = 0; i < 10; i++)
+        {
+            Vector2 randomDir = GetRandomDirection();
+            Vector3 targetPos = transform.position + (Vector3)randomDir;
+            if (IsWithinBounds(targetPos))
+            {
+                return new(randomDir, speedWhenPassive);
+            }
+        }
+        
+        // If no valid direction found, don't move
+        return new(Vector2.zero, 0);
+    }
+    
+    private bool IsWithinBounds(Vector3 position)
+    {
+        return position.x >= Constants.MinFieldPos && 
+               position.x <= Constants.MaxFieldPos && 
+               position.y >= Constants.MinFieldPos && 
+               position.y <= Constants.MaxFieldPos;
     }
 
     private void ChangeColor()
@@ -142,8 +168,11 @@ public class Enemy : AliveBehaviour
     {
         UpdateAggressive();
         MovableTrait.MoveProperties move = GetNewMove();
-        movable.QueueMove(move);
-        directionInstance.RotateDirection(move.direction);
+        if (move.direction != Vector2.zero)
+        {
+            movable.QueueMove(move);
+            directionInstance.RotateDirection(move.direction);
+        }
         ChangeColor();
         isNextMoveReady = true;
     }
