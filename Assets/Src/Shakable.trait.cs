@@ -16,8 +16,13 @@ public class ShakableTrait : AnimatedTrait
         SetAnimationSpeed(shakingSpeed);
     }
 
-    public void InitShake(float shakePower)
+public void InitShake(float shakePower)
     {   
+        // Don't start a new shake if already shaking
+        if (IsAnimating()) {
+            return;
+        }
+        
         if (shakePower > 100) shakePower = 100;
         this.shakePower = shakePower;
         AnimationStart();

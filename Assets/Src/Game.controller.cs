@@ -95,13 +95,12 @@ public class GameController : MonoBehaviour
             mainMenu.ShowGameOver();
         }
     }
-    
-
 
     void FixedUpdate()
     {  
         if (playerInstance.IsDead() && isRunning)
         {
+            isRunning = false;
             EndLose();
         }
         if(!rythm.FixedUpdate()) return;

@@ -4,6 +4,7 @@ using UnityEngine;
 public class MainCamera : MonoBehaviour
 {
     private ShakableTrait shake;
+    private bool hasShaken = false;
 
     void Start()
     {
@@ -17,7 +18,15 @@ public class MainCamera : MonoBehaviour
 
     public void Shake(float shakePower)
     {   
-        shake.InitShake(shakePower);
+        if (!hasShaken) {
+            shake.InitShake(shakePower);
+            hasShaken = true;
+        }
+    }
+
+    public void ResetShake()
+    {
+        hasShaken = false;
     }
 
     private void Update()
