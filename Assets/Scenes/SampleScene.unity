@@ -372,6 +372,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Direction
       objectReference: {fileID: 0}
+    - target: {fileID: 6506359401489627843, guid: b9c22f2106bcb6f4e864b82b108ce4af, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8519064402401188218, guid: b9c22f2106bcb6f4e864b82b108ce4af, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -710,7 +714,7 @@ GameObject:
   - component: {fileID: 671538968}
   - component: {fileID: 671538971}
   - component: {fileID: 671538973}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
