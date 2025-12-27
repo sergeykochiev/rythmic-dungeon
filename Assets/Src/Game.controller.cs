@@ -40,6 +40,7 @@ public class GameController : MonoBehaviour
         enemySpawnerInstance.CyclicStart();
         playerInstance.SetPower(beamPowerInstance);
         difficultyLevel = initialDifficulty;
+        mainCameraInstance.StartGameZoomAnimation();
     }
 
     public bool IsRunning()

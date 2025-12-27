@@ -7,7 +7,7 @@ public class BeamAnimation
 
     public BeamAnimation(Transform transform)
     {
-        scalable = new ScalableTrait(transform, speed: 0.0005f);
+        scalable = new ScalableTrait(transform, speed: 0.00075f);
         movable = new MovableTrait(transform, speed: 0.03f);
     }
 
