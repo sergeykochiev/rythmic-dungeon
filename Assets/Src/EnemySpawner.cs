@@ -25,7 +25,7 @@ public class EnemySpawner : Spawner<Enemy>
 
     public override (bool, bool) CyclicShouldCycleNow()
     {
-        return (GetEnemies().Length == 0, true);
+        return (false, true);
     }
 
     public void StopSpawning(bool killAll = false)
@@ -69,6 +69,7 @@ public class EnemySpawner : Spawner<Enemy>
 
     public override void CyclicOnStart()
     {
+        difficultyLevel = 1;
         CyclicUpdateInterval(2);
     }
 
@@ -86,7 +87,7 @@ public class EnemySpawner : Spawner<Enemy>
     public override bool ShouldSpawn(Vector2 position, Quaternion rotation)
     {
         Vector2 playerPos = playerInstance.transform.position;
-        return PositionWithinRadius(playerPos, position, 2);
+        return !PositionWithinRadius(playerPos, position, 2);
     }
 
     public override void InitInstance(Enemy instance)
